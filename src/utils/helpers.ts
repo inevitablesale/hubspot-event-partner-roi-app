@@ -75,11 +75,23 @@ export function formatDate(date: Date): string {
 }
 
 /**
- * Calculate days between two dates
+ * Calculate absolute days between two dates.
+ * Returns positive number regardless of date order.
+ * Use signedDaysBetween if order matters.
  */
 export function daysBetween(start: Date, end: Date): number {
   const diffTime = Math.abs(end.getTime() - start.getTime());
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
+
+/**
+ * Calculate signed days between two dates.
+ * Returns negative if end is before start.
+ */
+export function signedDaysBetween(start: Date, end: Date): number {
+  const diffTime = end.getTime() - start.getTime();
+  const days = diffTime / (1000 * 60 * 60 * 24);
+  return diffTime >= 0 ? Math.ceil(days) : Math.floor(days);
 }
 
 /**

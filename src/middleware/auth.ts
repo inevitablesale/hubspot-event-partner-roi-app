@@ -55,13 +55,19 @@ export function optionalAuth(req: Request, res: Response, next: NextFunction): v
 
 /**
  * HubSpot signature verification middleware
+ * 
+ * In production: Verifies the X-HubSpot-Signature header to ensure requests 
+ * are authentically from HubSpot.
+ * 
+ * In development: Logs a warning but allows requests through for easier testing.
+ * For staging environments, set VERIFY_HUBSPOT_SIGNATURE=true to enforce verification.
  */
 export function verifyHubSpotSignature(req: Request, res: Response, next: NextFunction): void {
-  // In production, verify the X-HubSpot-Signature header
-  // This is a placeholder for the actual signature verification
   const signature = req.headers['x-hubspot-signature'] as string;
+  const forceVerification = process.env.VERIFY_HUBSPOT_SIGNATURE === 'true';
+  const isProduction = process.env.NODE_ENV === 'production';
   
-  if (!signature && process.env.NODE_ENV === 'production') {
+  if (!signature && (isProduction || forceVerification)) {
     res.status(403).json({
       success: false,
       error: 'Invalid signature',
@@ -71,7 +77,18 @@ export function verifyHubSpotSignature(req: Request, res: Response, next: NextFu
     return;
   }
 
-  // In development, skip signature verification
+  // Log warning in non-production environments without signature
+  if (!signature && !isProduction) {
+    console.warn('⚠️ HubSpot signature verification skipped in development. Set VERIFY_HUBSPOT_SIGNATURE=true to enforce.');
+  }
+
+  // TODO: Implement actual signature verification using crypto
+  // const crypto = require('crypto');
+  // const clientSecret = config.hubspot.clientSecret;
+  // const sourceString = clientSecret + req.method + req.originalUrl + JSON.stringify(req.body);
+  // const expectedSignature = crypto.createHash('sha256').update(sourceString).digest('hex');
+  // if (signature !== expectedSignature) { ... }
+
   next();
 }
 

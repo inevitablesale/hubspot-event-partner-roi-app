@@ -32,6 +32,13 @@ export const config = {
     validSources: ['google', 'facebook', 'linkedin', 'twitter', 'email', 'partner', 'direct', 'referral', 'organic'],
     validMediums: ['cpc', 'cpm', 'email', 'social', 'organic', 'referral', 'display', 'partner'],
   },
+  pipeline: {
+    // Default assumption for average time (in days) from lead creation to opportunity
+    // Can be overridden with actual historical data when available
+    defaultTimeToOpportunityDays: parseInt(process.env.DEFAULT_TIME_TO_OPPORTUNITY_DAYS || '7', 10),
+    // Default sales cycle length in days if no historical data
+    defaultSalesCycleDays: parseInt(process.env.DEFAULT_SALES_CYCLE_DAYS || '30', 10),
+  },
 };
 
 export default config;

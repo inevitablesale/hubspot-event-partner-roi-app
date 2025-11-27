@@ -9,6 +9,7 @@ import {
 } from '../types';
 import { calculatePercentage } from '../utils/helpers';
 import { getEventAttributions } from './partnerAttribution';
+import { config } from '../config';
 
 // In-memory storage for ROI calculations
 const roiStore: Map<string, EventROI> = new Map();
@@ -217,10 +218,10 @@ export function calculatePipelineAnalytics(input: PipelineInput): PipelineAnalyt
   const velocityMetrics: VelocityMetrics = {
     leadsPerDay: deals.length / daysSinceStart,
     opportunitiesPerDay: deals.length / daysSinceStart,
-    averageTimeToOpportunity: 7, // Default assumption
+    averageTimeToOpportunity: config.pipeline.defaultTimeToOpportunityDays,
     averageTimeToClose: salesCycles.length > 0 
       ? salesCycles.reduce((sum, c) => sum + c, 0) / salesCycles.length 
-      : 30,
+      : config.pipeline.defaultSalesCycleDays,
   };
 
   // Forecast revenue (simple linear projection)

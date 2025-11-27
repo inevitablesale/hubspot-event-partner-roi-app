@@ -23,7 +23,14 @@ export function calculatePartnerAttribution(data: PartnerEventData): PartnerAttr
   const totalRevenueInfluenced = data.revenueInfluenced;
   
   // Calculate attributed revenue based on partner contribution
-  const contributionFactor = data.leadsGenerated > 0 ? 1 : 0.5;
+  // Partners with leads get full attribution (100%), while partners with
+  // only event presence (e.g., booth/sponsor) get partial attribution (50%)
+  // This follows a "first touch" vs "influence" attribution model
+  const LEAD_CONTRIBUTION_FACTOR = 1.0;
+  const PRESENCE_ONLY_CONTRIBUTION_FACTOR = 0.5;
+  const contributionFactor = data.leadsGenerated > 0 
+    ? LEAD_CONTRIBUTION_FACTOR 
+    : PRESENCE_ONLY_CONTRIBUTION_FACTOR;
   const revenueAttributed = totalRevenueInfluenced * contributionFactor;
   
   // Calculate attribution percentage (simplified model)
